@@ -21,7 +21,10 @@ int main(int argc, char *argv[]){
 		int size = atoi(argv[3]);
 
 		Percolation Perc(percent, number, size);
-		Perc.CreateBoard();
+		while(number > 0){
+			Perc.CreateBoard();
+			number--;
+		}
 	}
 	else{
 		cerr << "Invalid Number of Arguments!" << endl;

@@ -13,6 +13,10 @@ struct Board{
 	int OpenOrClosed; // 1 is for an open cell and 0 is for a closed cell
 	int x, y; //positon on board
 };
+struct node{
+	int x,y; //nodes location
+	int px,py; //parents location
+};
 
 class Percolation{
 private:
@@ -22,7 +26,10 @@ private:
 
 public:
 	Percolation(double, int, int);
+	int find(int, int, node[], int);
+	void Merge(int, int, node[], int);
 	void CreateBoard();
+	bool DoesPercolate();
 	double FindPercPercent();
 	int NumberOfClusters();
 };
