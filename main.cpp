@@ -18,6 +18,7 @@ int main(int argc, char *argv[]){
 	else if(argc == 4){
 		double percent = atof(argv[1]);
 		int number = atoi(argv[2]);
+		int total = atoi(argv[2]);
 		int size = atoi(argv[3]);
 
 		Percolation Perc(percent, number, size);
@@ -25,6 +26,7 @@ int main(int argc, char *argv[]){
 			Perc.CreateBoard();
 			number--;
 		}
+		cout << "Percolation Rate: " << Perc.GetPercolates()/total << endl;
 	}
 	else{
 		cerr << "Invalid Number of Arguments!" << endl;

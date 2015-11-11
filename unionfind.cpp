@@ -19,23 +19,24 @@ Percolation::Percolation(double per, int number, int size){
 	percolates = 0;
 }
 
-int Percolation::find(int x, int y, node n[], int size){
-	int i = 0;
-	bool isFound = false;
-
-	for(i; i < size && !isFound; i=i){
-		i++;
-		if(n[i].x == x && n[i].y == y){
-			isFound = true;
-		}
+int Percolation::find(int root, int arr[]){
+	if(arr[root] != root){
+		find(arr[root], arr);
 	}
-
-	cout << "Found x: " << x << " y: " << y << " at " << i << endl;
-	return i;
+	else{
+		return root;
+	}
 }
 
-void Percolation::Merge(int x, int y, node n[], int size){
-	
+void Percolation::Union(int x, int y, int arr[]){
+	int a = find(x, arr);
+	int b = find(y, arr);
+	if(a < b){
+		arr[b] = a;
+	}
+	else{
+		arr[a] = b;
+	}
 }
 
 void Percolation::CreateBoard(){
@@ -60,42 +61,52 @@ void Percolation::CreateBoard(){
 		}
 		cout << endl;
 	}
-	int count= 0;
-	for(int i = 0; i < boardSize; i++){
-		for(int j = 0; j < boardSize; j++){
-			if(board[j][i].OpenOrClosed == 1){
-				count++;
-			}	
-		}
-	}
-	node arr[count];
-	int position = 0;
+	
 	for(int i = 0; i < boardSize; i++){
 		for(int j = 0; j < boardSize; j++){
 			if(board[i][j].OpenOrClosed == 1){
-				arr[position].x = j;
-				arr[position].y = i;
-				arr[position].px = j;
-				arr[position].py = i;
-				position++;
+			
 			}	
 		}
 	}
-	for(int i = 0; i < count; i++){
-		if(board[arr[i].x][arr[i].y + 1].OpenOrClosed == 1 && (arr[i].y + 1) < boardSize){
-			position = find(arr[i].x, arr[i].y + 1, arr, count);
-			arr[position].px = arr[i].px; 
-			arr[position].py = arr[i].py;
-		}
-		if(board[arr[i].x + 1][arr[i].y].OpenOrClosed == 1 && (arr[i].x + 1) < boardSize){
-			position = find(arr[i].x + 1, arr[i].y, arr, count);
-			arr[position].px = arr[i].px; 
-			arr[position].py = arr[i].py;
+
+	int arr[boardSize*boardSize];
+	int above;
+
+	for(int i = 0; i < boardSize*boardSize; i++){
+		arr[i] = -1;
+	}
+	for(int i = 0; i < boardSize*boardSize; i++){
+		if(board[i%boardSize][i/boardSize].OpenOrClosed == 1){
+			arr[i] = i;
+			above = i - boardSize;
+			if(above >= 0){
+				if(board[above%boardSize][above/boardSize].OpenOrClosed == 1){
+					Union(i, above, arr);
+				}
+			}
+			if(i % boardSize != 0){
+				if(board[i - 1][i / boardSize].OpenOrClosed == 1){
+					Union(i, i - 1, arr);
+				}
+			}
+
 		}
 	}
-	for(int i = 0; i < count; i++){
-		cout << i << "\tx: " << arr[i].x << " y: " << arr[i].y << " px: " << arr[i].px << " py: " << arr[i].py << endl;
+	bool Perc = false;
+	for(int i = 0; i < boardSize; i++){
+		if(board[i][(boardSize - 1)].OpenOrClosed == 1){
+			if(find((boardSize - 1)*boardSize + i, arr) < boardSize){
+				Perc = true;
+			}
+		}
 	}
-		
+	if(Perc){
+		percolates++;
+	}	
+}
+
+int Percolation::GetPercolates(){
+	return percolates;
 }
 
