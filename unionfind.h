@@ -2,7 +2,7 @@
 *  Programmer: Tyler Potochnik           *
 *  The University Of Akron               *
 *                                        *
-*  Last Edited:                          *
+*  Last Edited:11/17/15                  *
 *                                        *
 *****************************************/
 
@@ -18,15 +18,15 @@ class Percolation{
 private:
 	int numOfBoards, boardSize;
 	double percent;
-	int percolates; // adds one if the board percolates
+	double percolates; // adds one if the board percolates
 
 public:
 	Percolation(double, int, int);
 	int find(int, int[]);
 	void Union(int, int, int[]);
 	void CreateBoard();
-	int GetPercolates();
-	int NumberOfClusters();
+	double GetPercolates();
+	int NumberOfClusters(std::string);
 };
 
 

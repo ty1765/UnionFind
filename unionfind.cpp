@@ -2,12 +2,15 @@
 *  Programmer: Tyler Potochnik           *
 *  The University Of Akron               *
 *                                        *
-*  Last Edited:                          *
+*  Last Edited:11/17/15                  *
 *                                        *
 *****************************************/
 #include <iostream>
 #include <stdlib.h>
 #include <time.h>
+#include <fstream>
+#include <string>
+#include <cmath>
 #include "unionfind.h"
 
 using namespace std;
@@ -41,8 +44,8 @@ void Percolation::Union(int x, int y, int arr[]){
 
 void Percolation::CreateBoard(){
 	Board board[boardSize][boardSize];
-	srand(time(NULL));
 	int random;
+
 	for(int i = 0; i < boardSize; i++){
 		for(int j = 0; j < boardSize; j++){
 			random = int(rand()%100);
@@ -54,20 +57,6 @@ void Percolation::CreateBoard(){
 			}
 		}
 		
-	}
-	for(int i = 0; i < boardSize; i++){
-		for(int j = 0; j < boardSize; j++){
-			cout << board[j][i].OpenOrClosed << " ";
-		}
-		cout << endl;
-	}
-	
-	for(int i = 0; i < boardSize; i++){
-		for(int j = 0; j < boardSize; j++){
-			if(board[i][j].OpenOrClosed == 1){
-			
-			}	
-		}
 	}
 
 	int arr[boardSize*boardSize];
@@ -86,8 +75,9 @@ void Percolation::CreateBoard(){
 				}
 			}
 			if(i % boardSize != 0){
-				if(board[i - 1][i / boardSize].OpenOrClosed == 1){
-					Union(i, i - 1, arr);
+				int left = i - 1;
+				if(board[left % boardSize][left / boardSize].OpenOrClosed == 1){
+					Union(i, left, arr);
 				}
 			}
 
@@ -106,7 +96,61 @@ void Percolation::CreateBoard(){
 	}	
 }
 
-int Percolation::GetPercolates(){
+double Percolation::GetPercolates(){
 	return percolates;
 }
 
+int Percolation::NumberOfClusters(string file){
+	ifstream inFile;
+	string line = "";
+	char c;
+	int size, count = 0;
+	inFile.open(file.c_str());
+
+	while(inFile >> c){
+			line += c;
+			count++;
+		}
+	inFile.close();
+	size = sqrt(count);
+	Board board[size][size];
+	int temp = 0;
+	for(int i = 0; i < size; i++){
+		for(int j = 0; j < size; j++){
+			board[j][i].OpenOrClosed = int((line[temp] - 48));
+			temp++;
+		}
+	}
+
+	int above = 0, left = 0;
+	int arr[size*size];
+	for(int i = 0; i < size*size; i++){
+		arr[i] = -1;
+	}
+
+	for(int i = 0; i < size*size; i++){
+		if(board[i%size][i/size].OpenOrClosed == 1){
+			arr[i] = i;
+			above = i - size;
+			if(above >= 0){
+				if(board[above%size][above/size].OpenOrClosed == 1){
+					Union(i, above, arr);
+				}
+			}
+			if(i % size != 0){
+				left = i - 1;
+				if(board[left % size][left / size].OpenOrClosed == 1){
+					Union(i, left, arr);
+				}
+			}
+
+		}
+	}
+    int clusters = 0;
+    for(int i = 0; i < size*size; i++){
+    	if(i == arr[i]){
+    		clusters++;
+    	}
+    }
+    cout << "Number of Clusters: " << clusters << endl;
+}
